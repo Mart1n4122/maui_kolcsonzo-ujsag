@@ -1,0 +1,26 @@
+@NEWSPAPER_HostAddress = http://localhost:5278
+
+GET {{NEWSPAPER_HostAddress}}/list?isReady=false&pageNumber=2&pageSize=25
+Accept: application/json
+
+###
+POST {{NEWSPAPER_HostAddress}}/create
+Content-Type: application/json
+Accept: application/json
+
+{
+
+}
+
+###
+PUT {{NEWSPAPER_HostAddress}}/update
+Content-Type: application/json
+Accept: application/json
+
+{
+
+}
+
+###
+DELETE {{NEWSPAPER_HostAddress}}/delete/1
+Accept: application/json
