@@ -1,3 +1,4 @@
+using Common;
 using Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -35,16 +36,16 @@ builder.Services.AddEndpointsApiExplorer();
 
 // Configure the Database connection
 var connectionString = builder.Configuration.GetConnectionString("NewsPaperDbContext");
-builder.Services.AddDbContext<NewsPaperDbContext>(options =>
+builder.Services.AddDbContext<BlogDbContext>(options =>
   options.UseSqlServer(connectionString));
 
 // accountEndpoints.MapIdentityApi<IdentityUser>(); - ezekhez az endpointokhoz szükséges service-eket adja hozzá a DI-hoz
 builder.Services.AddIdentityApiEndpoints<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<NewsPaperDbContext>();
+    .AddEntityFrameworkStores<BlogDbContext>();
 
 // Configure the DI container
-builder.Services.AddTransient<IToDoService, ToDoService>();
+//builder.Services.AddTransient<IBlogService, BlogService>();
 
 // Authorization szolgáltatás hozzáadása a DI konténerhez
 builder.Services.AddAuthorization();
@@ -84,33 +85,32 @@ accountEndpoints.MapIdentityApi<IdentityUser>();
 
 // ToDo endpointok hozzáadása
 var toDoEndpoints = app.MapGroup("ToDo").WithTags("ToDo");
-toDoEndpoints.MapGet("get/{id:int}", async (int id, IToDoService service) =>
+toDoEndpoints.MapGet("get/{id:int}", async (int id, IBlogService service) =>
 {
     return await service.GetAsync(id);
 }).RequireAuthorization();
 
 toDoEndpoints.MapGet("list", async (
     [FromQuery(Name = "isReady")] bool? isReady,
-    IToDoService service) =>
+    IBlogService service) =>
 {
     return await service.ListAllAsync(isReady);
 }).RequireAuthorization();
 
-toDoEndpoints.MapPost("create", async (Newspa model, IToDoService service) =>
 {
     await service.CreateAsync(model);
 
     return Results.Created();
 }).RequireAuthorization("admin");
 
-toDoEndpoints.MapPut("update", async (ToDo model, IToDoService service) =>
+toDoEndpoints.MapPut("update", async (NewspaperDto model, IBlogService service) =>
 {
     await service.UpdateAsync(model);
 
     return Results.Ok();
 }).RequireAuthorization();
 
-toDoEndpoints.MapDelete("delete/{id:int}", async (int id, IToDoService service) =>
+toDoEndpoints.MapDelete("delete/{id:int}", async (int id, IService service) =>
 {
     await service.DeleteAsync(id);
 
@@ -119,7 +119,7 @@ toDoEndpoints.MapDelete("delete/{id:int}", async (int id, IToDoService service) 
 
 // Auto migration
 using var scope = app.Services.CreateScope();
-using var dbContext = scope.ServiceProvider.GetRequiredService<ToDoDbContext>();
+using var dbContext = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
 var migrations = await dbContext.Database.GetPendingMigrationsAsync();
 if (migrations.Any())
     await dbContext.Database.MigrateAsync();

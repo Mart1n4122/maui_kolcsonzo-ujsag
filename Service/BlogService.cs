@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Services;
 
-public class ToDoService(NewsPaperDbContext db) : IToDoService
+public class BlogService(BlogDbContext db) : IBlogService
 {
+
 }
