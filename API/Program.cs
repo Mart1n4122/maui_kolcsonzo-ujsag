@@ -45,7 +45,7 @@ builder.Services.AddIdentityApiEndpoints<IdentityUser>(options => options.SignIn
     .AddEntityFrameworkStores<BlogDbContext>();
 
 // Configure the DI container
-//builder.Services.AddTransient<IBlogService, BlogService>();
+builder.Services.AddTransient<IBlogService, BlogService>();
 
 // Authorization szolgáltatás hozzáadása a DI konténerhez
 builder.Services.AddAuthorization();
@@ -83,34 +83,41 @@ var accountEndpoints = app.MapGroup("Account").WithTags("Account");
 accountEndpoints.MapIdentityApi<IdentityUser>();
 
 
-// ToDo endpointok hozzáadása
-var toDoEndpoints = app.MapGroup("ToDo").WithTags("ToDo");
-toDoEndpoints.MapGet("get/{id:int}", async (int id, IBlogService service) =>
+// Blog endpointok hozzáadása
+var blogEndpoints = app.MapGroup("Blog").WithTags("Blog");
+blogEndpoints.MapGet("get/{id:int}", async (
+    int id, IBlogService service) =>
 {
     return await service.GetAsync(id);
 }).RequireAuthorization();
 
-toDoEndpoints.MapGet("list", async (
+blogEndpoints.MapGet("list", async (
     [FromQuery(Name = "isReady")] bool? isReady,
     IBlogService service) =>
 {
-    return await service.ListAllAsync(isReady);
+    return await service.ListAllAsync();
 }).RequireAuthorization();
 
+blogEndpoints.MapPost("create", async (
+    NewspaperDto dto,
+    IBlogService service) =>
 {
-    await service.CreateAsync(model);
+    await service.CreateAsync(dto);
 
     return Results.Created();
 }).RequireAuthorization("admin");
 
-toDoEndpoints.MapPut("update", async (NewspaperDto model, IBlogService service) =>
+blogEndpoints.MapPut("update", async (
+    NewspaperDto dto, 
+    IBlogService service) =>
 {
-    await service.UpdateAsync(model);
+    await service.UpdateAsync(dto);
 
     return Results.Ok();
 }).RequireAuthorization();
 
-toDoEndpoints.MapDelete("delete/{id:int}", async (int id, IService service) =>
+blogEndpoints.MapDelete("delete/{id:int}", async (
+    int id, IBlogService service) =>
 {
     await service.DeleteAsync(id);
 
