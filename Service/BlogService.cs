@@ -14,7 +14,7 @@ public class BlogService(BlogDbContext db) : IBlogService
         {
             ArticleId = article.Id,
             AuthorId = article.AuthorId,
-            AuthorName = article.Author.name,
+            AuthorName = article.Author.Name,
             Title = article.Title,
             Content = article.Content,
         };
@@ -25,7 +25,7 @@ public class BlogService(BlogDbContext db) : IBlogService
         {
             ArticleId = a.Id,
             AuthorId = a.AuthorId,
-            AuthorName = a.Author.name,
+            AuthorName = a.Author.Name,
             Title = a.Title,
             Content = a.Content
         }).ToListAsync();

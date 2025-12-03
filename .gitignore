@@ -9,3 +9,7 @@ Client/bin
 Client/obj
 Common/obj
 Service/obj
+API/bin
+Common/bin
+Data/bin
+Service/bin
