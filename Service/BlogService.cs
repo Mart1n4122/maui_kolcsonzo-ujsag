@@ -8,11 +8,27 @@ public class BlogService(BlogDbContext db) : IBlogService
 {
     public async Task<NewspaperDto> GetAsync(int id)
     {
-        return null;
+        var article = await db.Articles.SingleAsync(a => a.Id == id);
+
+        return new NewspaperDto
+        {
+            ArticleId = article.Id,
+            AuthorId = article.AuthorId,
+            AuthorName = article.Author.name,
+            Title = article.Title,
+            Content = article.Content,
+        };
     }
-    public async Task<NewspaperDto> ListAllAsync()
+    public async Task<List<NewspaperDto>> ListAllAsync()
     {
-        return null;
+        return await db.Articles.Select(a => new NewspaperDto
+        {
+            ArticleId = a.Id,
+            AuthorId = a.AuthorId,
+            AuthorName = a.Author.name,
+            Title = a.Title,
+            Content = a.Content
+        }).ToListAsync();
     }
     public async Task CreateAsync(NewspaperDto dto)
     {
