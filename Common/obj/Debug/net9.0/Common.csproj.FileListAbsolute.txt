@@ -1,0 +1,6 @@
+C:\Users\b1totmar\maui_kolcsonzo-ujsag\Common\obj\Debug\net9.0\Common.csproj.AssemblyReference.cache
+C:\Users\b1totmar\maui_kolcsonzo-ujsag\Common\obj\Debug\net9.0\Common.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\b1totmar\maui_kolcsonzo-ujsag\Common\obj\Debug\net9.0\Common.AssemblyInfoInputs.cache
+C:\Users\b1totmar\maui_kolcsonzo-ujsag\Common\obj\Debug\net9.0\Common.AssemblyInfo.cs
+C:\Users\b1totmar\maui_kolcsonzo-ujsag\Common\obj\Debug\net9.0\Common.csproj.CoreCompileInputs.cache
+C:\Users\b1totmar\maui_kolcsonzo-ujsag\Common\obj\Debug\net9.0\Common.sourcelink.json
