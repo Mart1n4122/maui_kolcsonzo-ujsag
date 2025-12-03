@@ -89,14 +89,14 @@ blogEndpoints.MapGet("get/{id:int}", async (
     int id, IBlogService service) =>
 {
     return await service.GetAsync(id);
-}).RequireAuthorization();
+});
 
 blogEndpoints.MapGet("list", async (
     [FromQuery(Name = "isReady")] bool? isReady,
     IBlogService service) =>
 {
     return await service.ListAllAsync();
-}).RequireAuthorization();
+});
 
 blogEndpoints.MapPost("create", async (
     NewspaperDto dto,
@@ -114,7 +114,7 @@ blogEndpoints.MapPut("update", async (
     await service.UpdateAsync(dto);
 
     return Results.Ok();
-}).RequireAuthorization();
+}).RequireAuthorization("admin");
 
 blogEndpoints.MapDelete("delete/{id:int}", async (
     int id, IBlogService service) =>
@@ -122,7 +122,7 @@ blogEndpoints.MapDelete("delete/{id:int}", async (
     await service.DeleteAsync(id);
 
     return Results.Ok();
-}).RequireAuthorization();
+}).RequireAuthorization("admin");
 
 // Auto migration
 using var scope = app.Services.CreateScope();
