@@ -32,14 +32,29 @@ public class BlogService(BlogDbContext db) : IBlogService
     }
     public async Task CreateAsync(NewspaperDto dto)
     {
+        var article = new Article
+        {
+             AuthorId = dto.AuthorId,
+             Content = dto.Content,
+             CreatedAt = DateTime.Now,
+             Title = dto.Title,
 
+
+        };
+        db.Articles.Add(article);
+        await db.SaveChangesAsync();
     }
     public async Task UpdateAsync(NewspaperDto dto)
     {
-
+        await db.Articles.Where(a => a.Id == dto.ArticleId).ExecuteUpdateAsync(
+            setters =>
+                setters.SetProperty(a => a.Content, dto.Content)
+                        .SetProperty(a => a.Title, dto.Title)
+                        .SetProperty(a => a.AuthorId, dto.AuthorId)
+                        .SetProperty(a => a.UpdatedAt, DateTime.Now));
     }
     public async Task DeleteAsync(int id)
     {
-
+        await db.Articles.Where(a => a.Id == id).ExecuteDeleteAsync();
     }
 }

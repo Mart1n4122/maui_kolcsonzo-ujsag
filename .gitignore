@@ -7,3 +7,5 @@ Data/obj
 API/obj
 Client/bin
 Client/obj
+Common/obj
+Service/obj
