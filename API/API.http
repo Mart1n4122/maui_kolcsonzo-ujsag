@@ -1,24 +1,37 @@
 @NEWSPAPER_HostAddress = http://localhost:5278
 
-GET {{NEWSPAPER_HostAddress}}/list?isReady=false&pageNumber=2&pageSize=25
+GET {{NEWSPAPER_HostAddress}}/Blog/list?isReady=false&pageNumber=2&pageSize=25
 Accept: application/json
 
+
 ###
-POST {{NEWSPAPER_HostAddress}}/create
+POST {{NEWSPAPER_HostAddress}}/Blog/create
 Content-Type: application/json
 Accept: application/json
 
 {
-
+  "articleId": 0,
+  "authorId": 1,
+  "authorName": "John Doe",
+  "title": "Sample Title",
+  "content": "Sample content for the article.",
+  "createdAt": "2024-06-01T12:00:00",
+  "updatedAt": null
 }
 
 ###
-PUT {{NEWSPAPER_HostAddress}}/update
+PUT {{NEWSPAPER_HostAddress}}/Blog/update
 Content-Type: application/json
 Accept: application/json
 
 {
-
+  "articleId": 1,
+  "authorId": 1,
+  "authorName": "John Doe",
+  "title": "Updated Title",
+  "content": "Updated content for the article.",
+  "createdAt": "2024-06-01T12:00:00",
+  "updatedAt": "2024-06-02T09:00:00"
 }
 
 ###

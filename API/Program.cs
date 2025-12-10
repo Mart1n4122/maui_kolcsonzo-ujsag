@@ -5,12 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services;
 
-
 // Ez a sor felel az alap web szerver létrehozásáért.
-// Builder pattern-t használ, ahol a konfigurációs beállításokat a builder objektumon keresztül adjuk meg.
 var builder = WebApplication.CreateBuilder(args);
-
-// Elkezdjük a buildert felparaméterezni a szükséges szolgáltatásokkal és konfigurációkkal.
 
 // Swaggerhez, azon belül is az authentikációhoz szükséges beállítások
 builder.Services.AddOpenApiDocument(config =>
@@ -26,12 +22,12 @@ builder.Services.AddOpenApiDocument(config =>
     config.OperationProcessors.Add(new NSwag.Generation.Processors.Security.AspNetCoreOperationSecurityScopeProcessor("JWT"));
 });
 
-// Authorization policy-k hozzáadása, ezekre tudunk majd hivatkozni RequireAuthorization metódusokban.
+// Authorization policy-k hozzáadása
 builder.Services.AddAuthorizationBuilder()
   .AddPolicy("admin", policy => policy.RequireRole("Admin"))
   .AddPolicy("user", policy => policy.RequireRole("User"));
 
-// Ez a tesztekben használhatósághoz kell, hogy a teszt framework elérje az endpointokat
+// Tesztekhez szükséges endpoint explorer
 builder.Services.AddEndpointsApiExplorer();
 
 // Configure the Database connection
@@ -39,51 +35,48 @@ var connectionString = builder.Configuration.GetConnectionString("NewsPaperDbCon
 builder.Services.AddDbContext<BlogDbContext>(options =>
   options.UseSqlServer(connectionString));
 
-// accountEndpoints.MapIdentityApi<IdentityUser>(); - ezekhez az endpointokhoz szükséges service-eket adja hozzá a DI-hoz
+// Identity endpointokhoz szükséges service-ek
 builder.Services.AddIdentityApiEndpoints<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<BlogDbContext>();
 
-// Configure the DI container
+// DI container konfiguráció
 builder.Services.AddTransient<IBlogService, BlogService>();
 
-// Authorization szolgáltatás hozzáadása a DI konténerhez
+// Authorization szolgáltatás
 builder.Services.AddAuthorization();
 
-// CORS beállítások hozzáadása a DI konténerhez, CORS a böngészõbõl érkezõ kérések kezeléséhez szükséges.
+// CORS beállítások
 var allowSpecificOrigins = "_allowSpecificOrigins";
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(allowSpecificOrigins,
                       policy =>
                       {
-                          policy.WithOrigins("*")
-                            .AllowAnyHeader()
-                            .AllowAnyMethod();
+                          policy.AllowAnyOrigin()
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
                       });
 });
 
-//A fentebb megadott konfigurációk alapján létrehozzuk a web alkalmazás objektumot.
+// Web alkalmazás objektum létrehozása
 var app = builder.Build();
 
-// CORS middleware hozzáadása az alkalmazás middleware pipeline-jához
+// CORS middleware
 app.UseCors(allowSpecificOrigins);
 
-// Configure the HTTP request pipeline.
+// HTTP request pipeline konfiguráció
 if (app.Environment.IsDevelopment())
 {
-    // Swagger middleware hozzáadása a pipeline-hoz fejlesztõi környezetben
     app.UseOpenApi();
     app.UseSwaggerUi();
 }
 
-
-// User kezeléshez szükséges endpointok hozzáadása
+// User kezelés endpointok
 var accountEndpoints = app.MapGroup("Account").WithTags("Account");
 accountEndpoints.MapIdentityApi<IdentityUser>();
 
-
-// Blog endpointok hozzáadása
+// Blog endpointok
 var blogEndpoints = app.MapGroup("Blog").WithTags("Blog");
 blogEndpoints.MapGet("get/{id:int}", async (
     int id, IBlogService service) =>
@@ -108,7 +101,7 @@ blogEndpoints.MapPost("create", async (
 }).RequireAuthorization("admin");
 
 blogEndpoints.MapPut("update", async (
-    NewspaperDto dto, 
+    NewspaperDto dto,
     IBlogService service) =>
 {
     await service.UpdateAsync(dto);
@@ -141,8 +134,8 @@ if (!await roles.AnyAsync(role => role.Name == "Admin"))
     await dbContext.SaveChangesAsync();
 }
 
-// Az alkalmazás elindítása, innentõl kezdve képes fogadni a bejövõ HTTP kéréseket.
+// Az alkalmazás elindítása
 app.Run();
 
-//Ez a tesztekben használhatósághoz kell, hogy publikusan elérhetõ legyen a Program osztály
+// Tesztekhez szükséges
 public partial class Program;
